@@ -1,0 +1,19 @@
+modLoader = "javafml"
+loaderVersion = "[${loader_version},)"
+issueTrackerURL = "https://github.com/Brass-Goggled-Coders/Turtles/issues"
+license = "MIT"
+
+[[mods]]
+modId = "turtles"
+version = "${version}"
+displayName = "Turtles"
+authors = "SkySom"
+description = '''
+    '''
+
+[[dependencies.turtles]]
+modId = "forge"
+mandatory = true
+versionRange = "[${forge_version},)"
+ordering = "NONE"
+side = "BOTH"
