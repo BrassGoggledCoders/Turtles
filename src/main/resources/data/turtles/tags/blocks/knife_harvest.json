@@ -1,0 +1,14 @@
+{
+  "values": [
+    "minecraft:tall_grass",
+    "minecraft:wheat",
+    {
+      "id": "farmersdelight:rice_upper_crop",
+      "required": "false"
+    },
+    {
+      "id": "farmersdelight:honey_glazed_ham_block",
+      "required": "false"
+    }
+  ]
+}

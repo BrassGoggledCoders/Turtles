@@ -8,6 +8,7 @@ import dan200.computercraft.api.turtle.TurtleSide;
 import dan200.computercraft.api.turtle.TurtleUpgradeType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.TransformationMatrix;
@@ -32,6 +33,20 @@ public class BasicTurtleUpgrade implements ITurtleUpgrade {
         this.item = RegistryObject.of(itemName, ForgeRegistries.ITEMS);
         this.adjective = adjective;
         this.upgradeId = new ResourceLocation(Turtles.ID, itemName.getNamespace() + "_" + itemName.getPath());
+    }
+
+    public void setup(TurtlesFakePlayer fakePlayer, ITurtleAccess turtleAccess) {
+        fakePlayer.setHeldItem(Hand.MAIN_HAND, this.getItemStack());
+        fakePlayer.setHeldItem(Hand.OFF_HAND, turtleAccess.getItemHandler().extractItem(
+                turtleAccess.getSelectedSlot(), 64, false));
+    }
+
+    public void clear(TurtlesFakePlayer fakePlayer, ITurtleAccess turtleAccess) {
+        fakePlayer.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+        turtleAccess.getItemHandler().setStackInSlot(turtleAccess.getSelectedSlot(),
+                fakePlayer.getHeldItem(Hand.OFF_HAND));
+        fakePlayer.setHeldItem(Hand.OFF_HAND, ItemStack.EMPTY);
+
     }
 
     @Nonnull

@@ -10,19 +10,16 @@ import dan200.computercraft.api.turtle.TurtleVerb;
 import net.minecraft.block.BlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.items.CapabilityItemHandler;
 
 import javax.annotation.Nonnull;
 
-public class KnifeTurtle extends BasicTurtleUpgrade {
-    public KnifeTurtle(String material) {
+public class KnifeTurtleUpgrade extends BasicTurtleUpgrade {
+    public KnifeTurtleUpgrade(String material) {
         super(new ResourceLocation("farmersdelight", material + "_knife"), "knife");
     }
 
@@ -34,26 +31,28 @@ public class KnifeTurtle extends BasicTurtleUpgrade {
             BlockPos diggingPosition = turtle.getPosition().offset(direction);
             BlockState diggingBlockState = turtle.getWorld().getBlockState(diggingPosition);
             World world = turtle.getWorld();
-            if (diggingBlockState.isIn(TurtlesBlockTags.CAN_KNIFE)) {
-                TileEntity tileEntity = world.getTileEntity(diggingPosition);
-                if (tileEntity != null && tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
-                        .map(inventory -> !inventory.getStackInSlot(0).isEmpty())
-                        .orElse(false)
-                ) {
-                    if (world instanceof ServerWorld) {
-                        TurtlesFakePlayer turtlesFakePlayer = TurtlesFakePlayer.get((ServerWorld) world);
-                        turtlesFakePlayer.setup(turtle, this);
-                        diggingBlockState.onBlockActivated(turtle.getWorld(), turtlesFakePlayer, Hand.MAIN_HAND,
-                                new BlockRayTraceResult(new Vector3d(0.5D, 0.5D, 0.5D), direction.getOpposite(),
-                                        diggingPosition, true));
-                        turtlesFakePlayer.clear();
-                    }
+            if (diggingBlockState.isIn(TurtlesBlockTags.KNIFE_CUT)) {
+                if (checkInventory(world, diggingPosition, turtle)) {
+                    TurtlesFakePlayer.rightClickBlock(turtle, this, diggingBlockState, direction);
                     return TurtleCommandResult.success();
                 }
                 return TurtleCommandResult.failure("Nothing to knife");
+            } else if (diggingBlockState.isIn(TurtlesBlockTags.KNIFE_HARVEST)) {
+                return TurtlesFakePlayer.harvestBlock();
             }
             return TurtleCommandResult.failure("Cannot Knife Block");
         }
         return TurtleCommandResult.failure("Can only dig");
+    }
+
+    public boolean checkInventory(IWorld world, BlockPos blockPos, ITurtleAccess turtleAccess) {
+        if (turtleAccess.getItemHandler().getStackInSlot(turtleAccess.getSelectedSlot()).isEmpty()) {
+            TileEntity tileEntity = world.getTileEntity(blockPos);
+            return tileEntity != null && tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+                    .map(inventory -> !inventory.getStackInSlot(0).isEmpty())
+                    .orElse(false);
+        } else {
+            return true;
+        }
     }
 }
