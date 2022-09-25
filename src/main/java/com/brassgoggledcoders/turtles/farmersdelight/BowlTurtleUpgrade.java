@@ -1,7 +1,6 @@
 package com.brassgoggledcoders.turtles.farmersdelight;
 
 import com.brassgoggledcoders.turtles.TurtlesBlockTags;
-import com.brassgoggledcoders.turtles.turtle.BasicTurtleUpgrade;
 import com.brassgoggledcoders.turtles.turtle.TurtlesFakePlayer;
 import dan200.computercraft.api.turtle.ITurtleAccess;
 import dan200.computercraft.api.turtle.TurtleCommandResult;

@@ -1,21 +1,27 @@
 buildscript {
     repositories {
         mavenCentral()
-        jcenter()
         maven {
             name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            url = "https://maven.minecraftforge.net"
+        }
+        maven {
+            name = "parchment"
+            url = "https://maven.parchmentmc.org"
         }
     }
     dependencies {
-        classpath group: "net.minecraftforge.gradle", name: "ForgeGradle", version: "3.+", changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: "org.parchmentmc", name: "librarian", version: "1.+"
     }
 }
 
 apply plugin: "net.minecraftforge.gradle"
-apply plugin: "maven"
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: "java"
 apply plugin: "idea"
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 version = "${minecraft_version}-" + getVersion()
 group = "${group}"
@@ -26,7 +32,7 @@ repositories {
     mavenCentral()
     maven {
         name = "forge"
-        url = "http://files.minecraftforge.net/maven"
+        url = "https://maven.minecraftforge.net"
     }
     maven {
         name = "ComputerCraft"
@@ -38,6 +44,10 @@ repositories {
         content {
             includeGroup "curse.maven"
         }
+    }
+    maven {
+        name = "JEI"
+        url = "https://dvs1.progwml6.com/files/maven"
     }
 }
 
@@ -76,7 +86,7 @@ processResources {
 }
 
 minecraft {
-    mappings channel: "snapshot", version: "${mappings_version}"
+    mappings channel: 'parchment', version: '2022.03.13-1.18.2'
 
     runs {
         client {
@@ -127,10 +137,11 @@ minecraft {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    compile fg.deobf("org.squiddev:cc-tweaked-${minecraft_version}:1.95.2")
-    compile fg.deobf("curse.maven:farmersdelight-398521:3173079")
+    implementation fg.deobf("org.squiddev:cc-tweaked-1.18.2:1.100.4")
+    implementation fg.deobf("curse.maven:farmersdelight-398521:3999153")
 
-    testImplementation('org.junit.jupiter:junit-jupiter:5.6.1')
+    compileOnly fg.deobf("mezz.jei:jei-1.18.2:9.7.0.192:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:9.7.0.192")
 }
 
 task srcJar(type: Jar) {
@@ -161,17 +172,6 @@ artifacts {
     archives javadocJar
     archives srcJar
 }
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: "file://" + (System.getenv("local_maven") != null ? System.getenv("local_maven") : System.getenv("bamboo_local_maven")))
-        }
-    }
-}
-
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
 
 String getVersion() {
     String version = "${mod_version}"
