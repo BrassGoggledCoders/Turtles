@@ -1,6 +1,5 @@
 package com.brassgoggledcoders.turtles;
 
-import com.brassgoggledcoders.turtles.farmersdelight.FarmersDelightTurtles;
 import com.brassgoggledcoders.turtles.pneumaticcraft.PneumaticCraftTurtles;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;

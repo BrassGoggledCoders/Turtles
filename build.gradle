@@ -46,8 +46,18 @@ repositories {
         }
     }
     maven {
+        name "Patchouli"
+        url "https://maven.blamejared.com"
+        content {
+            includeGroupByRegex "vazkii.*"
+        }
+    }
+    maven {
         name = "JEI"
         url = "https://dvs1.progwml6.com/files/maven"
+        content {
+            includeGroup "mezz.jei"
+        }
     }
 }
 
@@ -67,22 +77,6 @@ sourceSets {
             exclude '.cache'
         }
     }
-}
-
-def version_properties = [
-        "version"       : version,
-        "mc_version"    : minecraft_version,
-        "forge_version" : min_forge_version,
-        "loader_version": loader_version
-]
-
-processResources {
-    outputs.upToDateWhen { false }
-    from(sourceSets.main.resources) {
-        include "META-INF/mods.toml"
-        expand version_properties
-    }
-    into "$buildDir/resources/main/"
 }
 
 minecraft {
@@ -137,8 +131,11 @@ minecraft {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
+    implementation fg.deobf("vazkii.patchouli:Patchouli:1.18.2-69")
     implementation fg.deobf("org.squiddev:cc-tweaked-1.18.2:1.100.4")
+
     implementation fg.deobf("curse.maven:farmersdelight-398521:3999153")
+    implementation fg.deobf("curse.maven:pneumaticcraft-281849:3995275")
 
     compileOnly fg.deobf("mezz.jei:jei-1.18.2:9.7.0.192:api")
     runtimeOnly fg.deobf("mezz.jei:jei-1.18.2:9.7.0.192")
